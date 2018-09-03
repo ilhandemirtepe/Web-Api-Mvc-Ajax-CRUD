@@ -1,0 +1,201 @@
+﻿<script src="~/Scripts/jquery-1.7.1.js"></script>
+<script type="text/javascript">
+
+    //Load the students in the List and displays when the documnet is loaded
+    $(document).ready(function () {
+        jQuery.support.cors = true;
+        $.ajax({
+            url: '/api/student',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponses(data);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+
+        //Displays in a Table
+        function WriteResponses(students) {
+            var strResult = "<table><th>Adı</th><th>Öğrenci ID</th><th>Cinsiyet</th><th>Yaş</th>";
+            $.each(students, function (index, student) {
+                strResult += "<tr><td>" + student.name + "</td><td> " + student.id + "</td><td>" + student.gender + "</td><td>" + student.age + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#divResult").html(strResult);
+        }
+
+    });
+
+    //Get a Particular Student based on ID
+    function GetStudent() {
+        jQuery.support.cors = true;
+        $.ajax({
+            url: 'api/student/' + document.getElementById('studentId').value,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponse(data);
+            },
+            error: function (x, y, z) {
+                alert('The Student not found in the List for the given ID');
+            }
+        });
+
+        function WriteResponse(student) {
+            document.getElementById('name').innerHTML = "<h3>" + student.name + "</h3>";
+            document.getElementById('id').innerHTML = "<h3>" + student.id + "</h3>";
+            document.getElementById('gender').innerHTML = "<h3>" + student.gender + "</h3>";
+            document.getElementById('age').innerHTML = "<h3>" + student.age + "</h3>";
+        }
+    }
+
+    //Adds a Student to the List
+    function AddStudent() {
+        var student = {
+            name: document.getElementById('newStudentName').value,
+            id: document.getElementById('newStudentId').value,
+            gender: document.getElementById('newStudentGender').value,
+            age: document.getElementById('newStudentAge').value
+        };
+
+        $.ajax({
+            url: 'api/student/',
+            type: 'POST',
+            data: JSON.stringify(student),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                alert('Student added Successfully');
+                GetAllStudents();
+            },
+            error: function () {
+                alert('Student not Added');
+            }
+        });
+    }
+
+    //Updates the student Details in the List
+    function PutStudent() {
+        var student = {
+            name: document.getElementById('newStudentName').value,
+            id: document.getElementById('newStudentId').value,
+            gender: document.getElementById('newStudentGender').value,
+            age: document.getElementById('newStudentAge').value
+        };
+
+        $.ajax({
+            url: 'api/student/' + document.getElementById('newStudentId').value,
+            type: 'PUT',
+            data: JSON.stringify(student),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                alert('Details Updated Successfully');
+                GetAllStudents();
+            },
+            error: function () {
+                alert('Unable to Update for the Given ID');
+            }
+        });
+    }
+
+    function GetAllStudents() {
+        jQuery.support.cors = true;
+        $.ajax({
+            url: 'api/student',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponses(data);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+
+        //Displays in a Table
+        function WriteResponses(students) {
+            var strResult = "<table><th>Adı</th><th>Öğrenci ID</th><th>Cinsiyet</th><th>Yaş</th>";
+            $.each(students, function (index, student) {
+                strResult += "<tr><td>" + student.name + "</td><td> " + student.id + "</td><td>" + student.gender + "</td><td>" + student.age + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#divResult").html(strResult);
+        }
+    }
+
+</script>
+
+<h1 style="color: #f00">Öğrenci Listesi </h1>
+<div id="divResult" style="margin-left: 15px"></div>
+
+<div>
+    <h1 style="color: #f00">ID verilen öğrenci getir</h1>
+</div>
+<div style="margin-left: 15px">
+    <h3>Öğrencı  ID Gir:</h3>
+    <input id="studentId" type="text" />
+    <button id="GetStudent" onclick="GetStudent()">Getir</button>
+</div>
+<div style="margin-left: 15px">
+    <table>
+        <tr>
+            <td>
+                <h3>Adı</h3>
+            </td>
+            <td><span id="name"></span></td>
+        </tr>
+        <tr>
+            <td>
+                <h3>ID</h3>
+            </td>
+            <td><span id="id"></span></td>
+        </tr>
+        <tr>
+            <td>
+                <h3>Cinsiyet</h3>
+            </td>
+            <td><span id="gender"></span></td>
+        </tr>
+        <tr>
+            <td>
+                <h3>Yaş</h3>
+            </td>
+            <td><span id="age"></span></td>
+        </tr>
+    </table>
+</div>
+<div>
+    <h1 style="color: #f00">Öğrenci Ekle veya Güncelle </h1>
+    <table style="margin-left: 15px">
+        <tr>
+            <td><span>Adı</span></td>
+            <td>
+                <input id="newStudentName" type="text" /></td>
+        </tr>
+        <tr>
+            <td><span>ID</span></td>
+            <td>
+                <input id="newStudentId" type="number" /></td>
+        </tr>
+        <tr>
+            <td><span>Cinsiyet</span></td>
+            <td>
+                <select id="newStudentGender">
+                    <option value="Male">Erkek</option>
+                    <option value="Female">Kadın</option>
+                </select></td>
+        </tr>
+        <tr>
+            <td><span>Yaş</span></td>
+            <td>
+                <input id="newStudentAge" type="number" /></td>
+        </tr>
+        <tr>
+            <td>
+                <button id="postStudent" onclick="AddStudent()">Ekle</button></td>
+            <td>
+                <button id="putStudent" onclick="PutStudent()">Güncelle</button></td>
+        </tr>
+    </table>
+</div>
